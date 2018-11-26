@@ -1,0 +1,53 @@
+[{
+  "id": "mobile-phone",
+  "name": "Meta Phone Q",
+  "brand": "Meta Tech",
+  "specs": {
+      "capacity": "256GB",
+      "display": "6\" HD Display",
+      "weight": "130 grams",
+      "resolution": "1334x750"
+  },
+  "price": "699",
+  "type": "mobile",
+  "description": ""
+},{
+  "id": "mobile-phone2",
+  "name": "Meta Phone S",
+  "brand": "Meta Tech",
+  "specs": {
+      "capacity": "128GB",
+      "display": "4.7\" Display",
+      "weight": "112 grams",
+      "resolution": "1334x750"
+  },
+  "price": "499",
+  "type": "mobile",
+  "description": ""
+},{
+  "id": "tablet",
+  "name": "Meta Tab",
+  "brand": "Meta Tech",
+  "specs": {
+      "capacity": "256GB",
+      "display": "10\" HD Display",
+      "weight": "160 grams",
+      "resolution": "1920x1080"
+  },
+  "price": "350",
+  "type": "monitor",
+  "description": ""
+},{
+  "id": "monitor",
+  "name": "Meta Tech M2400 24\" Monitor",
+  "brand": "Meta Tech",
+  "specs": {
+      "display": "24\" 1080p Led Display",
+      "resolution": "1920x1080",
+      "inputs": "2x Display Port, 1x HDMI, 1x DVI",
+      "advanced": "1ms response time, 144hz refresh rate"
+  },
+  "price": "399",
+  "type": "monitor",
+  "description": ""
+}]

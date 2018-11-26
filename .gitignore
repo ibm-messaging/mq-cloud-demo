@@ -1,0 +1,10 @@
+aws-backend-request/JMSLambdaFunction/build
+.DS_Store
+aws-backend-request/JMSLambdaFunction/.gradle
+aws-backend-request/JMSLambdaFunction/target
+.gradle
+ibm-backend-response/jmsapp/com/ibm/mq/samples/jms/JmsPutGet.class
+ibm-backend-response/jmsapp/jars/*.*
+aws-backend-request/JMSLambdaFunction/jars/*.*
+qm-config/*.json
+qm-config/cookiejar.txt

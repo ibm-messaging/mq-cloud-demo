@@ -1,0 +1,66 @@
+/**
+ * © Copyright IBM Corporation 2018
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
+@import 'colours';
+
+.spinner {
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+  border: 3px solid $color8;
+  border-color: $color8 $color8 $color8 transparent;
+  border-radius: 50%;
+  animation: loading-animation 1.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  &:after {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    content: '';
+    height: 16px;
+    width: 16px;
+    border: 1px solid $color8;
+    border-color: transparent $color8 $color8 $color8;
+    border-radius: 50%;
+    animation: loading-animation-reverse 1s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  }
+}
+
+@keyframes loading-animation {
+  0% {
+    transform: rotate(0deg);
+    border-color: $color8 $color8 $color8 transparent;
+  }
+  50% {
+    border-color: $color6 $color6 $color6 transparent;
+  }
+  100% {
+    transform: rotate(360deg);
+    border-color: $color8 $color8 $color8 transparent;
+  }
+}
+
+@keyframes loading-animation-reverse {
+  0% {
+    transform: rotate(0deg);
+    border-color: transparent $color6 $color6 $color6;
+  }
+  50% {
+    border-color: transparent $color8 $color8 $color8;
+  }
+  100% {
+    transform: rotate(-360deg);
+    border-color: transparent $color6 $color6 $color6;
+  }
+}

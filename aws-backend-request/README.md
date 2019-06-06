@@ -156,7 +156,7 @@ ___
 
 #### Screenshot of fully configured API Gateway
 
-![Configured API Gateway](./assets/api-gateway.png)
+![Configured API Gateway](../assets/api-gateway.png)
 ___
 
 ## Copyright

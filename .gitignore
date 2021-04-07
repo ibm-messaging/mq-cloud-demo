@@ -8,3 +8,6 @@ ibm-backend-response/jmsapp/jars/*.*
 aws-backend-request/JMSLambdaFunction/jars/*.*
 qm-config/*.json
 qm-config/cookiejar.txt
+*.kdb
+*.sth
+*.pem

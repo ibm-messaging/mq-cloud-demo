@@ -1,5 +1,5 @@
 /**
-* © Copyright IBM Corporation 2018
+* © Copyright IBM Corporation 2018,2021
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -63,7 +63,10 @@ public class JmsPutGet {
 	private static final String APP_USER = System.getenv("APP_USER"); // User name that application uses to connect to MQ
 	private static final String APP_PASSWORD = System.getenv("APP_PASSWORD"); // Password that the application uses to connect to MQ
 	private static final String TARGET_QUEUE_NAME = "STOCK.REPLY"; // Queue that the application uses to put and get messages to and from
-  	private static final String SOURCE_QUEUE_NAME = "STOCK"; // Queue that the application uses to put and get messages to and from
+  private static final String SOURCE_QUEUE_NAME = "STOCK"; // Queue that the application uses to put and get messages to and from
+  private static final String SSL_KEYSTORE = System.getenv("SSL_KEYSTORE"); // Keystore which holds the public certificate of the queue manager
+  private static final String SSL_KEYSTORE_PASSWORD = System.getenv("SSL_KEYSTORE_PASSWORD") ; // Password for the SSL Keystore
+	private static final String CIPHER_SPEC = "ANY_TLS12_OR_HIGHER"; // Cipher specification
 
 	/**
 	 * Main method
@@ -75,11 +78,13 @@ public class JmsPutGet {
 		System.out.println("port is: " + PORT);
 		System.out.println("qmgr name " + QMGR);
 		System.out.println("App_user is: " + APP_USER);
-		System.out.println("app api key is: " + APP_PASSWORD);
+		System.out.println("App api key is: " + APP_PASSWORD.substring(0, 6) + "...");
+		System.out.println("Cipher Spec is: " + CIPHER_SPEC);
+
 		// Variables
 		JMSContext context = null;
 		Destination destination = null;
-    	Destination source = null;
+    Destination source = null;
 		JMSProducer producer = null;
 		JMSConsumer consumer = null;
 
@@ -90,16 +95,21 @@ public class JmsPutGet {
 			JmsFactoryFactory ff = JmsFactoryFactory.getInstance(WMQConstants.WMQ_PROVIDER);
 			JmsConnectionFactory cf = ff.createConnectionFactory();
 
+			System.setProperty("javax.net.ssl.keyStore", SSL_KEYSTORE);
+			System.setProperty("javax.net.ssl.keyStorePassword", SSL_KEYSTORE_PASSWORD);
+
 			// Set the properties
 			cf.setStringProperty(WMQConstants.WMQ_HOST_NAME, HOST);
 			cf.setIntProperty(WMQConstants.WMQ_PORT, PORT);
 			cf.setStringProperty(WMQConstants.WMQ_CHANNEL, CHANNEL);
 			cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
 			cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, QMGR);
-			cf.setStringProperty(WMQConstants.WMQ_APPLICATIONNAME, "JmsPutGet (JMS)");
+			cf.setStringProperty(WMQConstants.WMQ_APPLICATIONNAME, "IBM Cloud Stock App (JMS)");
 			cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
 			cf.setStringProperty(WMQConstants.USERID, APP_USER);
 			cf.setStringProperty(WMQConstants.PASSWORD, APP_PASSWORD);
+			cf.setStringProperty(WMQConstants.WMQ_SSL_CIPHER_SPEC, CIPHER_SPEC);
+			cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
 
 			// Create JMS objects
 			context = cf.createContext();
@@ -120,14 +130,12 @@ public class JmsPutGet {
            corrid = "blank";
          }
 
-//         String receivedMessage = TMreceivedMessage.toString();
          String receivedMessage = TMreceivedMessage.getBody(String.class);
 
          if ( receivedMessage != null ) {
 
            System.out.println("\n\n}============================{\n");
 
-           //receivedMessage = "{ \"product\": \"iphone8\" }";  //TMP
 			     System.out.println("\nGot message from STOCK queue:\n  " + receivedMessage);
 
            System.out.println("\n\nRetrieving stock level ...\n");

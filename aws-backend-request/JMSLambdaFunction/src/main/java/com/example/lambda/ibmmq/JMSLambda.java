@@ -1,5 +1,5 @@
 /**
-* © Copyright IBM Corporation 2018
+* © Copyright IBM Corporation 2018, 2021
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -43,21 +43,27 @@ public class JMSLambda implements RequestHandler<Map<String,String>,String> {
 	private static final String APP_PASSWORD = System.getenv("APP_PASSWORD"); //Password that the application uses to connect to MQ
 	private static final String TARGET_QUEUE_NAME = System.getenv("TARGET_QUEUE_NAME"); // Queue that the application uses to put and get messages to and from
 	private static final String RESPONSE_QUEUE_NAME = System.getenv("RESPONSE_QUEUE_NAME"); // Queue that the application uses to put and get messages to and from
+  private static final String SSL_KEYSTORE = System.getenv("SSL_KEYSTORE"); // Keystore which holds the public certificate of the queue manager
+	private static final String SSL_KEYSTORE_PASSWORD = System.getenv("SSL_KEYSTORE_PASSWORD") ; // Password for the SSL Keystore
+	private static final String CIPHER_SPEC = "ANY_TLS12_OR_HIGHER"; // Cipher specification
+	
+	@Override
+	public String handleRequest(Map<String, String> input, Context context) {
+		//context.getLogger().log("Input: " + input)
 
-    @Override
-    public String handleRequest(Map<String, String> input, Context context) {
-  	  //context.getLogger().log("Input: " + input);
+		JMSContext jmscontext = null;
+		Destination destination = null;
+		Destination source = null;
+		JMSProducer producer = null;
+		JMSConsumer consumer = null;
 
-  	  JMSContext jmscontext = null;
-  	  Destination destination = null;
-  	  Destination source = null;
-  	  JMSProducer producer = null;
-  	  JMSConsumer consumer = null;
-
-  	  try {
+		try {
 		// Create a connection factory
 		JmsFactoryFactory ff = JmsFactoryFactory.getInstance(WMQConstants.WMQ_PROVIDER);
 		JmsConnectionFactory cf = ff.createConnectionFactory();
+
+		System.setProperty("javax.net.ssl.keyStore", SSL_KEYSTORE);
+		System.setProperty("javax.net.ssl.keyStorePassword", SSL_KEYSTORE_PASSWORD);
 
 		// Set the properties
 		cf.setStringProperty(WMQConstants.WMQ_HOST_NAME, HOST);
@@ -65,11 +71,13 @@ public class JMSLambda implements RequestHandler<Map<String,String>,String> {
 		cf.setStringProperty(WMQConstants.WMQ_CHANNEL, CHANNEL);
 		cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
 		cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, QMGR);
-		cf.setStringProperty(WMQConstants.WMQ_APPLICATIONNAME, "JmsPutGet (JMS)");
+		cf.setStringProperty(WMQConstants.WMQ_APPLICATIONNAME, "AWS Stock Finder (JMS)");
 		cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
 		cf.setStringProperty(WMQConstants.USERID, APP_USER);
 		cf.setStringProperty(WMQConstants.PASSWORD, APP_PASSWORD);
-
+		cf.setStringProperty(WMQConstants.WMQ_SSL_CIPHER_SPEC, CIPHER_SPEC);
+		cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
+				
 		// Create JMS objects
 		jmscontext = cf.createContext();
 		destination = jmscontext.createQueue("queue:///" + TARGET_QUEUE_NAME);
@@ -98,7 +106,7 @@ public class JMSLambda implements RequestHandler<Map<String,String>,String> {
 		source = jmscontext.createQueue("queue:///" + RESPONSE_QUEUE_NAME);
 
 		consumer = jmscontext.createConsumer(source, "JMSCorrelationID='"+corrid+"'"); // autoclosable
-		String receivedMessage = consumer.receiveBody(String.class, 15000); // in ms or 15 seconds
+		String receivedMessage = consumer.receiveBody(String.class, 60000); // in ms or 60 seconds
 
 		System.out.println("\nGot reply message from STOCK.REPLY queue: " + receivedMessage);
 

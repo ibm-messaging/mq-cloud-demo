@@ -1,5 +1,5 @@
 #!/bin/bash
-# © Copyright IBM Corporation 2018
+# © Copyright IBM Corporation 2018, 2021
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -63,7 +63,7 @@ then
   QMGR_1_HOST=`jq '.hostname' ${QM_FILE_1} -r`
   QMGR_1_PORT=`jq '.listenerPort' ${QM_FILE_1} -r`
   QMGR_1_NAME=`jq '.queueManagerName' ${QM_FILE_1} -r`
-  QMGR_1_ENV=`jq '.deploymentLocation' ${QM_FILE_1} -r | awk -F"-" '{ print $1}' | tr '[:lower:]' '[:upper:]'`
+  QMGR_1_ENV=`jq '.hostname' ${QM_FILE_1} -r | awk -F"-" '{ print $2}' | tr '[:lower:]' '[:upper:]'`
   if [ ${QMGR_1_ENV} == ${BMX} ];
   then
     QMGR_1_ENV=${IBM}
@@ -126,11 +126,11 @@ then
   QMGR_2_HOST=`jq '.hostname' ${QM_FILE_2} -r`
   QMGR_2_PORT=`jq '.listenerPort' ${QM_FILE_2} -r`
   QMGR_2_NAME=`jq '.queueManagerName' ${QM_FILE_2} -r`
-  QMGR_2_ENV=`jq '.deploymentLocation' ${QM_FILE_2} -r | awk -F"-" '{ print $1}' | tr '[:lower:]' '[:upper:]'`
+  QMGR_2_ENV=`jq '.hostname' ${QM_FILE_2} -r | awk -F"-" '{ print $2}' | tr '[:lower:]' '[:upper:]'`
   if [ ${QMGR_2_ENV} == ${BMX} ];
   then
     QMGR_2_ENV=${IBM}
-    echo ${QMGR_1_ENV}
+    echo ${QMGR_2_ENV}
   fi
 else
   printf "\nHostname of second queue manager: e.g. qm2.other.domain.com\n"
